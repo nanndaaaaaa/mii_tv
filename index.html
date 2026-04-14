@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>EFFY TV - Channel 00</title>
+    <style>
+        :root {
+            --glow: #3a3a3a; /* Color de brillo oscuro */
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            background-color: #050505;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        /* Contenedor principal - Estilo Monitor CRT */
+        .monitor {
+            position: relative;
+            width: 95vw;
+            max-width: 900px;
+            aspect-ratio: 4 / 3;
+            background: #000;
+            border: 20px solid #1a1a1a;
+            border-radius: 30px;
+            box-shadow: 0 0 40px #000, inset 0 0 30px #000;
+            overflow: hidden;
+        }
+
+        /* Efecto de parpadeo y líneas (Scanlines) */
+        .scanlines {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%, 
+                rgba(0, 0, 0, 0.1) 50%
+            ), linear-gradient(
+                90deg, 
+                rgba(255, 0, 0, 0.03), 
+                rgba(0, 255, 0, 0.01), 
+                rgba(0, 0, 255, 0.03)
+            );
+            background-size: 100% 3px, 3px 100%;
+            z-index: 10;
+            pointer-events: none;
+            animation: flicker 0.15s infinite;
+        }
+
+        @keyframes flicker {
+            0% { opacity: 0.9; }
+            100% { opacity: 1; }
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(0.2) contrast(1.2) brightness(0.8);
+        }
+
+        /* Letrero de Canal (Estética Cyber/Punk) */
+        .ui-overlay {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #fff;
+            text-shadow: 0 0 5px #fff, 0 0 10px #0ff;
+            font-size: 1.2rem;
+            z-index: 11;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="monitor">
+        <div class="ui-overlay">CH 00 - RANDOM MODE</div>
+        <div class="scanlines"></div>
+        <video id="tv" autoplay muted playsinline></video>
+    </div>
+
+    <script>
+        // --- AQUÍ PEGAS TUS LINKS DE TELEGRAM ---
+        const playlist = [
+            "https://tu-link-de-telegram-1.mp4",
+            "https://tu-link-de-telegram-2.mp4"
+        ];
+
+        const videoPlayer = document.getElementById('tv');
+
+        function playNext() {
+            const randomSource = playlist[Math.floor(Math.random() * playlist.length)];
+            videoPlayer.src = randomSource;
+            videoPlayer.load();
+            videoPlayer.play().catch(() => {
+                console.log("Esperando interacción para sonar...");
+            });
+        }
+
+        // Al terminar un video, salta a otro
+        videoPlayer.onended = playNext;
+
+        // Iniciar al cargar la página
+        window.onload = playNext;
+
+        // Quitar el 'muted' al hacer click (regla de los navegadores)
+        document.body.onclick = () => {
+            videoPlayer.muted = false;
+        };
+    </script>
+</body>
+</html>
